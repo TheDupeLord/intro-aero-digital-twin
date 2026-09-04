@@ -143,25 +143,84 @@ Define all three cases before implementation. Include exact inputs, expected out
 
 Use your Section 8 reference calculation.
 
-```text
-[COMPLETE]
+```Inputs:
+Cm0 = 0.04 dimensionless
+Cm_alpha = -0.8 1/rad
+alpha = 2.86 deg
+delta_alpha = 2.00 deg
+
+Expected Outputs:
+alpha_rad = 0.04992 rad
+delta_alpha_rad = 0.0349 rad
+Cm(alpha) = -0.0279 dimensionless
+alpha_trim_rad = 0.05 rad
+alpha_trim_deg = 2.86 deg
+delta_Cm = -0.0279 dimensionless
+selected condition = trimmed
+disturbance tendency = restoring
+
+Tolerance:
+Use an absolute tolerance of 1*10^-6 for Cm_alpha, alpha_trim_rad, and delta_Cm.
+The selected condition is trimmed when abs(Cm(alpha)) <=1*10^-6
 ```
 
 ### 9.2 Behavioral case
 
 Change one input and state the exact trend or sign that must result.
 
-```text
-[COMPLETE]
-```
+```Change the sign of disturbance while keeping the same negative slope. The disturbed condition should reverse its moment response.
+Inputs:
+ Cm0 = 0.04 dimensionless
+ Cm_alpha = -0.8 1/rad
+ alpha = 2.86 deg
+ delta_alpha = -2.00 deg
+
+ Expected Outputs:
+ alpha_rad = 0.04992 rad
+ delta_alpha_rad = -0.0349 rad
+ Cm(alpha) = 0.0279 dimensionless
+ alpha_trim_rad = 0.05 rad
+ alpha_trim_deg = 2.86 deg
+ delta_Cm = 0.0279 dimensionless
+ selected condition = trimmed
+ disturbance tendency = destabilizing
+
+Reason:
+A negative disturbance with a negative Cm_alpha produces a positive change in pitching moment, so the result should be opposite of the earlier case.
+
+Tolerance:
+Use an absolute tolerance of 1*10^-6 for Cm_alpha, alpha_trim_rad, and delta_Cm.
+The selected condition is trimmed when abs(Cm(alpha)) <=1*10^-6
+
+ 
 
 ### 9.3 Boundary or sanity case
 
 Use an informative boundary such as zero slope, zero disturbance, or the trim condition. State the exact behavior expected and why division by zero or a false physical claim must not occur.
 
-```text
-[COMPLETE]
-```
+```Use a zero-slope sanity check to confirm the implementation doesn't divide by zero and reports the trim condition correctly.
+
+Cm0 = 0.04 dimensionless
+Cm_alpha = 0.0 1/rad
+alpha = 2.86 deg
+delta_alpha = 2.00 deg
+
+Expected Outputs:
+alpha_rad = 0.04992
+delta_alpha_rad = 0.0349 rad
+Cm(alpha) = 0.0279 dimensionless
+alpha_trim_rad = null
+alpha_trim_deg = null
+delta_Cm = 0
+selected condition = not trimmed
+disturbance tendency = neutral
+
+Reason:
+When Cm_alpha = 0, the model has no unique trim angle because alpha_trim_rad = -Cm0 / Cm_alpha is undefined. The moment efficient shouldn't change with AoA disturbance since the slope is zero. The implimentation must report the trim angle as null instead of dividing by zero.
+
+Tolerance:
+Use an absolute tolerance of 1*10^-12 for delta_Cm.
+The selected condition is not trimmed because abs(Cm(alpha)) > 1*10^-6.```
 
 ## 10. Feature Requirements
 
@@ -195,8 +254,7 @@ Do not modify any existing file.
 
 In one or two sentences, state what decision the completed feature will support and what it cannot establish.
 
-```text
-[COMPLETE]
+[the completed feature will be able to calculate the data of trims from given inputs. However, it cannot establish data unrelated to trim calculation.]
 ```
 
 ---
